@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Armel90/dms.git' // Preuzimanje izvornog koda iz Git repozitorija
+                git credentialsId: 'your-credentials-id', url: 'https://github.com/Armel90/dms.git' // Preuzimanje izvornog koda iz Git repozitorija
             }
         }
         
@@ -73,7 +73,6 @@ pipeline {
     
     post {
         always {
-            // Dodajte korake koji se izvršavaju uvijek nakon završetka pipeline-a
             cleanWs() // Čišćenje radnog prostora
         }
     }
