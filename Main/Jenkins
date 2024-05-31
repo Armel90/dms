@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+    
+    environment {
+        DOTNET_CLI_TELEMETRY_OPTOUT = '1' // Onemogućava slanje telemetrije .NET Core CLI
+        NODEJS_HOME = '/usr/local/bin'    // Putanja do Node.js
+        PATH = "${env.PATH}:${NODEJS_HOME}"
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/Armel90/dms.git' // Preuzimanje izvornog koda iz Git repozitorija
+            }
+        }
+        
+        stage('Restore packages') {
+            steps {
+                bat 'nuget restore DocumentManagement.sln' // Obnavljanje NuGet paketa
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                bat 'msbuild DocumentManagement.sln /t:Build /p:Configuration=Release' // Izgradnja projekta
+            }
+        }
+        
+        stage('Run Tests') {
+            steps {
+                // Dodajte korake za pokretanje testova (npr. unit testovi, integracioni testovi)
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                // Dodajte korake za deploy aplikacije na odgovarajuće okruženje
+                // Na primjer, kopiranje artefakata na server, ažuriranje konfiguracija itd.
+            }
+        }
+    }
+    
+    post {
+        always {
+            // Dodajte korake koji se izvršavaju uvijek nakon završetka pipeline-a
+            // Na primjer, čišćenje ili slanje izvještaja
+        }
+    }
+}
