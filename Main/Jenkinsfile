@@ -14,13 +14,13 @@ pipeline {
             }
         }
         
-        stage('Restore packages') {
+        stage('Restore NuGet Packages') {
             steps {
                 bat 'nuget restore DocumentManagement.sln' // Obnavljanje NuGet paketa
             }
         }
         
-        stage('Build') {
+        stage('Build .NET Core Solution') {
             steps {
                 bat 'msbuild DocumentManagement.sln /t:Build /p:Configuration=Release' // Izgradnja projekta
             }
@@ -28,13 +28,13 @@ pipeline {
         
         stage('Run Tests') {
             steps {
-                // Dodajte korake za pokretanje testova (npr. unit testovi, integracioni testovi)
+                // Ovdje možete dodati korake za pokretanje testova
             }
         }
         
         stage('Deploy') {
             steps {
-                // Dodajte korake za deploy aplikacije na odgovarajuće okruženje
+                // Ovdje možete dodati korake za deploy aplikacije na odgovarajuće okruženje
                 // Na primjer, kopiranje artefakata na server, ažuriranje konfiguracija itd.
             }
         }
@@ -47,3 +47,4 @@ pipeline {
         }
     }
 }
+
