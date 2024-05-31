@@ -14,28 +14,59 @@ pipeline {
             }
         }
         
+        stage('Install .NET Core SDK') {
+            steps {
+                script {
+                    if (!fileExists('/usr/share/dotnet/dotnet')) {
+                        sh '''
+                            wget https://dotnet.microsoft.com/download/dotnet-core/scripts/v1/dotnet-install.sh
+                            chmod +x dotnet-install.sh
+                            ./dotnet-install.sh -c 7.0
+                        '''
+                    }
+                }
+            }
+        }
+        
+        stage('Install Node.js and Angular CLI') {
+            steps {
+                script {
+                    if (!fileExists('/usr/bin/node')) {
+                        sh '''
+                            curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+                            sudo apt-get install -y nodejs
+                            sudo npm install -g @angular/cli
+                        '''
+                    }
+                }
+            }
+        }
+        
         stage('Restore NuGet Packages') {
             steps {
-                bat 'nuget restore DocumentManagement.sln' // Obnavljanje NuGet paketa
+                sh 'dotnet restore DocumentManagement.sln' // Obnavljanje NuGet paketa
             }
         }
         
         stage('Build .NET Core Solution') {
             steps {
-                bat 'msbuild DocumentManagement.sln /t:Build /p:Configuration=Release' // Izgradnja projekta
+                sh 'dotnet build DocumentManagement.sln --configuration Release' // Izgradnja projekta
             }
         }
         
         stage('Run Tests') {
             steps {
-                // Ovdje možete dodati korake za pokretanje testova
+                sh 'dotnet test DocumentManagement.sln' // Pokretanje testova
             }
         }
         
         stage('Deploy') {
             steps {
-                // Ovdje možete dodati korake za deploy aplikacije na odgovarajuće okruženje
-                // Na primjer, kopiranje artefakata na server, ažuriranje konfiguracija itd.
+                sh '''
+                    # Primjer kopiranja artefakata na server i postavljanja servisa
+                    scp -r ./DocumentManagement.API/bin/Release/net7.0/publish/* user@server:/var/www/yourwebsitename/
+                    ssh user@server 'sudo systemctl restart your-service.service'
+                '''
             }
         }
     }
@@ -43,8 +74,7 @@ pipeline {
     post {
         always {
             // Dodajte korake koji se izvršavaju uvijek nakon završetka pipeline-a
-            // Na primjer, čišćenje ili slanje izvještaja
+            cleanWs() // Čišćenje radnog prostora
         }
     }
 }
-
