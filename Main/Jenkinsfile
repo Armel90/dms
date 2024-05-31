@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'your-credentials-id', url: 'https://github.com/Armel90/dms.git' // Preuzimanje izvornog koda iz Git repozitorija
+                git credentialsId: 'fb578b1a-0a4f-46bd-a55e-892a45813b72', url: 'https://github.com/Armel90/dms.git' // Preuzimanje izvornog koda iz Git repozitorija
             }
         }
         
